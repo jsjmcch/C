@@ -185,6 +185,188 @@ int main ()
 Possible output:
 Error opening file unexist.ent: No such file or directory
 ==============================================================================
+/* strpbrk example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char str[] = "This is a sample string";
+  char key[] = "aeiou";
+  char * pch;
+  printf ("Vowels in '%s': ",str);
+  pch = strpbrk (str, key);
+  while (pch != NULL)
+  {
+    printf ("%c " , *pch);
+    pch = strpbrk (pch+1,key);
+  }
+  printf ("\n");
+  return 0;
+}
+Output:
+Vowels in 'This is a sample string': i i a a e i 
+==============================================================================
+/* strrchr example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char str[] = "This is a sample string";
+  char * pch;
+  pch=strrchr(str,'s');
+  printf ("Last occurence of 's' found at %d \n",pch-str+1);
+  return 0;
+}
+Output:
+Last occurrence of 's' found at 18
+==============================================================================
+/* strspn example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  int i;
+  char strtext[] = "129th";
+  char cset[] = "1234567890";
+
+  i = strspn (strtext,cset);
+  printf ("The initial number has %d digits.\n",i);
+  return 0;
+}
+Output:
+The initial number has 3 digits.
+==============================================================================
+/* strstr example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char str[] ="This is a simple string";
+  char * pch;
+  pch = strstr (str,"simple");
+  strncpy (pch,"sample",6);
+  puts (str);
+  return 0;
+}
+Output:
+This is a sample string
+==============================================================================
+/* strtok example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char str[] ="- This, a sample string.";
+  char * pch;
+  printf ("Splitting string \"%s\" into tokens:\n",str);
+  pch = strtok (str," ,.-");
+  while (pch != NULL)
+  {
+    printf ("%s\n",pch);
+    pch = strtok (NULL, " ,.-");
+  }
+  return 0;
+}
+Output:
+Splitting string "- This, a sample string." into tokens:
+This
+a
+sample
+string
+==============================================================================
+/* memcpy example */
+#include <stdio.h>
+#include <string.h>
+
+struct {
+  char name[40];
+  int age;
+} person, person_copy;
+
+int main ()
+{
+  char myname[] = "Pierre de Fermat";
+
+  /* using memcpy to copy string: */
+  memcpy ( person.name, myname, strlen(myname)+1 );
+  person.age = 46;
+
+  /* using memcpy to copy structure: */
+  memcpy ( &person_copy, &person, sizeof(person) );
+  printf ("person_copy: %s, %d \n", person_copy.name, person_copy.age );
+
+  return 0;
+}
+Output:
+person_copy: Pierre de Fermat, 46 
+==============================================================================
+/* memcmp example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char buffer1[] = "DWgaOtP12df0";
+  char buffer2[] = "DWGAOTP12DF0";
+
+  int n;
+
+  n=memcmp ( buffer1, buffer2, sizeof(buffer1) );
+
+  if (n>0) printf ("'%s' is greater than '%s'.\n",buffer1,buffer2);
+  else if (n<0) printf ("'%s' is less than '%s'.\n",buffer1,buffer2);
+  else printf ("'%s' is the same as '%s'.\n",buffer1,buffer2);
+
+  return 0;
+}
+Output:
+'DWgaOtP12df0' is greater than 'DWGAOTP12DF0'
+==============================================================================
+/* memchr example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char * pch;
+  char str[] = "Example string";
+  pch = (char*) memchr (str, 'p', strlen(str));
+  if (pch!=NULL)
+    printf ("'p' found at position %d.\n", pch-str+1);
+  else
+    printf ("'p' not found.\n");
+  return 0;
+}
+Output:
+'p' found at position 5.
+==============================================================================
+/* memmove example */
+#include <stdio.h>
+#include <string.h>
+
+int main ()
+{
+  char str[] = "memmove can be very useful......";
+  memmove (str+20,str+15,11);
+  puts (str);
+  return 0;
+}
+Output:
+memmove can be very very useful.
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
 
 ==============================================================================
 
@@ -196,5 +378,7 @@ Error opening file unexist.ent: No such file or directory
 
 ==============================================================================
 
+==============================================================================
 
+==============================================================================
 
