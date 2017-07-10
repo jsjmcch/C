@@ -359,9 +359,45 @@ int main ()
 Output:
 memmove can be very very useful.
 ==============================================================================
+/* atof example: sine calculator */
+#include <stdio.h>      /* printf, fgets */
+#include <stdlib.h>     /* atof */
+#include <math.h>       /* sin */
 
+int main ()
+{
+  double n,m;
+  double pi=3.1415926535;
+  char buffer[256];
+  printf ("Enter degrees: ");
+  fgets (buffer,256,stdin);
+  n = atof (buffer);
+  m = sin (n*pi/180);
+  printf ("The sine of %f degrees is %f\n" , n, m);
+  return 0;
+}
+
+Output:
+Enter degrees: 45
+The sine of 45.000000 degrees is 0.707101
 ==============================================================================
+/* atoi example */
+#include <stdio.h>      /* printf, fgets */
+#include <stdlib.h>     /* atoi */
 
+int main ()
+{
+  int i;
+  char buffer[256];
+  printf ("Enter a number: ");
+  fgets (buffer, 256, stdin);
+  i = atoi (buffer);
+  printf ("The value entered is %d. Its double is %d.\n",i,i*2);
+  return 0;
+}
+Output:
+Enter a number: 73
+The value entered is 73. Its double is 146.
 ==============================================================================
 
 ==============================================================================
