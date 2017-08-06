@@ -399,7 +399,309 @@ Output:
 Enter a number: 73
 The value entered is 73. Its double is 146.
 ==============================================================================
+/* atol example */
+#include <stdio.h>      /* printf, fgets */
+#include <stdlib.h>     /* atol */
 
+int main ()
+{
+  long int li;
+  char buffer[256];
+  printf ("Enter a long number: ");
+  fgets (buffer, 256, stdin);
+  li = atol(buffer);
+  printf ("The value entered is %ld. Its double is %ld.\n",li,li*2);
+  return 0;
+}
+
+Output:
+Enter a number: 567283
+The value entered is 567283. Its double is 1134566.
+==============================================================================
+/* atoll example */
+#include <stdio.h>      /* printf, fgets */
+#include <stdlib.h>     /* atoll */
+
+int main ()
+{
+  long long int lli;
+  char buffer[256];
+  printf ("Enter a long number: ");
+  fgets (buffer, 256, stdin);
+  lli = atoll(buffer);
+  printf ("The value entered is %lld. Its double is %lld.\n",lli,lli*2);
+  return 0;
+}
+
+Output:
+Enter a number: 9275806
+The value entered is 9275806. Its double is 18551612.
+==============================================================================
+/* at_quick_exit example */
+#include <stdio.h>      /* puts */
+#include <stdlib.h>     /* at_quick_exit, quick_exit, EXIT_SUCCESS */
+
+void fnQExit (void)
+{
+  puts ("Quick exit function.");
+}
+
+int main ()
+{
+  at_quick_exit (fnQExit);
+  puts ("Main function: Beginning");
+  quick_exit (EXIT_SUCCESS);
+  puts ("Main function: End");  // never executed
+  return 0;
+}
+Output:
+
+Main function: Beginning
+Quick exit function.
+==============================================================================
+/* bsearch example with strings */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* qsort, bsearch, NULL */
+#include <string.h>     /* strcmp */
+
+char strvalues[][20] = {"some","example","strings","here"};
+
+int main ()
+{
+  char * pItem;
+  char key[20] = "example";
+
+  /* sort elements in array: */
+  qsort (strvalues, 4, 20, (int(*)(const void*,const void*)) strcmp);
+
+  /* search for the key: */
+  pItem = (char*) bsearch (key, strvalues, 4, 20, (int(*)(const void*,const void*)) strcmp);
+
+  if (pItem!=NULL)
+    printf ("%s is in the array.\n",pItem);
+  else
+    printf ("%s is not in the array.\n",key);
+  return 0;
+}
+Output:
+example is in the array.
+==============================================================================
+/* malloc example: random string generator*/
+#include <stdio.h>      /* printf, scanf, NULL */
+#include <stdlib.h>     /* malloc, free, rand */
+
+int main ()
+{
+  int i,n;
+  char * buffer;
+
+  printf ("How long do you want the string? ");
+  scanf ("%d", &i);
+
+  buffer = (char*) malloc (i+1);
+  if (buffer==NULL) exit (1);
+
+  for (n=0; n<i; n++)
+    buffer[n]=rand()%26+'a';
+  buffer[i]='\0';
+
+  printf ("Random string: %s\n",buffer);
+  free (buffer);
+
+  return 0;
+}
+
+/* calloc example */
+#include <stdio.h>      /* printf, scanf, NULL */
+#include <stdlib.h>     /* calloc, exit, free */
+
+int main ()
+{
+  int i,n;
+  int * pData;
+  printf ("Amount of numbers to be entered: ");
+  scanf ("%d",&i);
+  pData = (int*) calloc (i,sizeof(int));
+  if (pData==NULL) exit (1);
+  for (n=0;n<i;n++)
+  {
+    printf ("Enter number #%d: ",n+1);
+    scanf ("%d",&pData[n]);
+  }
+  printf ("You have entered: ");
+  for (n=0;n<i;n++) printf ("%d ",pData[n]);
+  free (pData);
+  return 0;
+}
+
+/* realloc example: rememb-o-matic */
+#include <stdio.h>      /* printf, scanf, puts */
+#include <stdlib.h>     /* realloc, free, exit, NULL */
+
+int main ()
+{
+  int input,n;
+  int count = 0;
+  int* numbers = NULL;
+  int* more_numbers = NULL;
+
+  do {
+     printf ("Enter an integer value (0 to end): ");
+     scanf ("%d", &input);
+     count++;
+
+     more_numbers = (int*) realloc (numbers, count * sizeof(int));
+
+     if (more_numbers!=NULL) {
+       numbers=more_numbers;
+       numbers[count-1]=input;
+     }
+     else {
+       free (numbers);
+       puts ("Error (re)allocating memory");
+       exit (1);
+     }
+  } while (input!=0);
+
+  printf ("Numbers entered: ");
+  for (n=0;n<count;n++) printf ("%d ",numbers[n]);
+  free (numbers);
+
+  return 0;
+}
+==============================================================================
+/* div example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* div, div_t */
+
+int main ()
+{
+  div_t divresult;
+  divresult = div (38,5);
+  printf ("38 div 5 => %d, remainder %d.\n", divresult.quot, divresult.rem);
+  return 0;
+}
+Output:
+38 div 5 => 7, remainder 3.
+==============================================================================  
+/* ldiv example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* ldiv, ldiv_t */
+
+int main ()
+{
+  ldiv_t ldivresult;
+  ldivresult = ldiv (1000000L,132L);
+  printf ("1000000 div 132 => %ld, remainder %ld.\n", ldivresult.quot, ldivresult.rem);
+  return 0;
+}
+Output:
+1000000 div 132 => 7575, remainder 100.  
+==============================================================================    
+/* lldiv example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* lldiv, lldiv_t */
+
+int main ()
+{
+  lldiv_t res;
+  res = lldiv (31558149LL,3600LL);
+  printf ("Earth orbit: %lld hours and %lld seconds.\n", res.quot, res.rem);
+  return 0;
+}  
+
+Output:
+Earth orbit: 8766 hours and 549 seconds.
+==============================================================================
+/* labs example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* labs */
+
+int main ()
+{
+  long int n,m;
+  n=labs(65537L);
+  m=labs(-100000L);
+  printf ("n=%ld\n",n);
+  printf ("m=%ld\n",m);
+  return 0;
+}
+Output:
+n=65537
+m=100000
+==============================================================================
+/* llabs example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* llabs */
+
+int main ()
+{
+  long long int n,m;
+  n=llabs(31558149LL);
+  m=llabs(-100000000LL);
+  printf ("n=%lld\n",n);
+  printf ("m=%lld\n",m);
+  return 0;
+}
+
+Output:
+n=31558149
+m=100000000
+==============================================================================
+/* mblen example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* mblen, mbtowc, wchar_t(C) */
+
+void printbuffer (const char* pt, size_t max)
+{
+  int length;
+  wchar_t dest;
+
+  mblen (NULL, 0);         /* reset mblen */
+  mbtowc (NULL, NULL, 0);  /* reset mbtowc */
+
+  while (max>0) {
+    length = mblen (pt, max);
+    if (length<1) break;
+    mbtowc(&dest,pt,length);
+    printf ("[%lc]",dest);
+    pt+=length; max-=length;
+  }
+}
+
+int main()
+{
+  const char str [] = "test string";
+
+  printbuffer (str,sizeof(str));
+
+  return 0;
+}
+Output:
+[t][e][s][t][ ][s][t][r][i][n][g]
+==============================================================================
+/* qsort example */
+#include <stdio.h>      /* printf */
+#include <stdlib.h>     /* qsort */
+
+int values[] = { 40, 10, 100, 90, 20, 25 };
+
+int compare (const void * a, const void * b)
+{
+  return ( *(int*)a - *(int*)b );
+}
+
+int main ()
+{
+  int n;
+  qsort (values, 6, sizeof(int), compare);
+  for (n=0; n<6; n++)
+     printf ("%d ",values[n]);
+  return 0;
+}
+
+Output:
+10 20 25 40 90 100  
 ==============================================================================
 
 ==============================================================================
