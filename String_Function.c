@@ -1157,6 +1157,182 @@ int main () {
 This code loads myfile.bin into a dynamically allocated memory buffer, 
 which can be used to manipulate the content of a file as an array.
 ==============================================================================
+/* fscanf example */
+#include <stdio.h>
+
+int main ()
+{
+  char str [80];
+  float f;
+  FILE * pFile;
+
+  pFile = fopen ("myfile.txt","w+");
+  fprintf (pFile, "%f %s", 3.1416, "PI");
+  rewind (pFile);
+  fscanf (pFile, "%f", &f);
+  fscanf (pFile, "%s", str);
+  fclose (pFile);
+  printf ("I have read: %f and %s \n",f,str);
+  return 0;
+}
+
+This sample code creates a file called myfile.txt and writes a float number and a string to it. 
+Then, the stream is rewinded and both values are read with fscanf. It finally produces an output similar to:
+I have read: 3.141600 and PI
+==============================================================================
+/* fseek example */
+#include <stdio.h>
+
+int main ()
+{
+  FILE * pFile;
+  pFile = fopen ( "example.txt" , "wb" );
+  fputs ( "This is an apple." , pFile );
+  fseek ( pFile , 9 , SEEK_SET );
+  fputs ( " sam" , pFile );
+  fclose ( pFile );
+  return 0;
+}
+
+After this code is successfully executed, the file example.txt contains:
+This is a sample.
+==============================================================================
+/* fsetpos example */
+#include <stdio.h>
+
+int main ()
+{
+  FILE * pFile;
+  fpos_t position;
+
+  pFile = fopen ("myfile.txt","w");
+  fgetpos (pFile, &position);
+  fputs ("That is a sample",pFile);
+  fsetpos (pFile, &position);
+  fputs ("This",pFile);
+  fclose (pFile);
+  return 0;
+}
+
+After this code is successfully executed, a file called myfile.txt will contain:
+This is a sample
+==============================================================================
+/* ftell example : getting size of a file */
+#include <stdio.h>
+
+int main ()
+{
+  FILE * pFile;
+  long size;
+
+  pFile = fopen ("myfile.txt","rb");
+  if (pFile==NULL) perror ("Error opening file");
+  else
+  {
+    fseek (pFile, 0, SEEK_END);   // non-portable
+    size=ftell (pFile);
+    fclose (pFile);
+    printf ("Size of myfile.txt: %ld bytes.\n",size);
+  }
+  return 0;
+}
+==============================================================================
+/* fwrite example : write buffer */
+#include <stdio.h>
+
+int main ()
+{
+  FILE * pFile;
+  char buffer[] = { 'x' , 'y' , 'z' };
+  pFile = fopen ("myfile.bin", "wb");
+  fwrite (buffer , sizeof(char), sizeof(buffer), pFile);
+  fclose (pFile);
+  return 0;
+}
+
+A file called myfile.bin is created and the content of the buffer is stored into it. 
+ For simplicity, the buffer contains char elements but it can contain any other type.
+sizeof(buffer) is the length of the array in bytes 
+(in this case it is three, because the array has three elements of one byte each).
+==============================================================================
+/* getc example: money counter */
+#include <stdio.h>
+int main ()
+{
+  FILE * pFile;
+  int c;
+  int n = 0;
+  pFile=fopen ("myfile.txt","r");
+  if (pFile==NULL) perror ("Error opening file");
+  else
+  {
+    do {
+      c = getc (pFile);
+      if (c == '$') n++;
+    } while (c != EOF);
+    fclose (pFile);
+    printf ("File contains %d$.\n",n);
+  }
+  return 0;
+}
+
+This program reads an existing file called myfile.txt character by character 
+and uses the n variable to count how many dollar characters ($) does the file contain. 
+==============================================================================
+/* gets example */
+#include <stdio.h>
+
+int main()
+{
+  char string [256];
+  printf ("Insert your full address: ");
+  gets (string);     // warning: unsafe (see fgets instead)
+  printf ("Your address is: %s\n",string);
+  return 0;
+}
+==============================================================================
+/* putc example: alphabet writer */
+#include <stdio.h>
+
+int main ()
+{
+  FILE * pFile;
+  char c;
+
+  pFile=fopen("alphabet.txt","wt");
+  for (c = 'A' ; c <= 'Z' ; c++) {
+    putc (c , pFile);
+    }
+  fclose (pFile);
+  return 0;
+}
+
+This example program creates a file called alphabet.txt and writes ABCDEFGHIJKLMNOPQRSTUVWXYZ to it. 
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
 
 ==============================================================================
 
