@@ -600,12 +600,7 @@ int main()
 
     return 0;
 }
-  
-  
-  
-  
-==============================================================================
-/* malloc example: random string generator*/
+
 #include <stdio.h>      /* printf, scanf, NULL */
 #include <stdlib.h>     /* malloc, free, rand */
 
@@ -629,7 +624,29 @@ int main ()
 
   return 0;
 }
+=====================================================================================
+/* srand example */
+#include <stdio.h>      /* printf, NULL */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
+int main ()
+{
+  printf ("First number: %d\n", rand()%100);
+  srand (time(NULL));
+  printf ("Random number: %d\n", rand()%100);
+  srand (1);
+  printf ("Again the first number: %d\n", rand()%100);
+
+  return 0;
+}
+
+Possible output:
+
+First number: 41
+Random number: 13
+Again the first number: 41
+=====================================================================================
 /* calloc example */
 #include <stdio.h>      /* printf, scanf, NULL */
 #include <stdlib.h>     /* calloc, exit, free */
@@ -1309,19 +1326,159 @@ int main ()
 
 This example program creates a file called alphabet.txt and writes ABCDEFGHIJKLMNOPQRSTUVWXYZ to it. 
 ==============================================================================
+/* remove example: remove myfile.txt */
+#include <stdio.h>
 
+int main ()
+{
+  if( remove( "myfile.txt" ) != 0 )
+    perror( "Error deleting file" );
+  else
+    puts( "File successfully deleted" );
+  return 0;
+}
 ==============================================================================
+/* rename example */
+#include <stdio.h>
 
+int main ()
+{
+  int result;
+  char oldname[] ="oldname.txt";
+  char newname[] ="newname.txt";
+  result= rename( oldname , newname );
+  if ( result == 0 )
+    puts ( "File successfully renamed" );
+  else
+    perror( "Error renaming file" );
+  return 0;
+}
 ==============================================================================
+/* rewind example */
+#include <stdio.h>
 
+int main ()
+{
+  int n;
+  FILE * pFile;
+  char buffer [27];
+
+  pFile = fopen ("myfile.txt","w+");
+  for ( n='A' ; n<='Z' ; n++)
+    fputc ( n, pFile);
+  rewind (pFile);
+  fread (buffer,1,26,pFile);
+  fclose (pFile);
+  buffer[26]='\0';
+  puts (buffer);
+  return 0;
+}
+
+A file called myfile.txt is created for reading and writing and filled with the alphabet. 
+The file is then rewinded, read and its content is stored in a buffer, 
+that then is written to the standard output:
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
 ==============================================================================
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
 
+void clearInputBuffer()
+{
+    // 입력 버퍼에서 문자를 계속 꺼내고 \n를 꺼내면 반복을 중단
+    while (getchar() != '\n');
+}
+
+int main()
+{
+    char phoneNumber[14];
+    char name[10];
+
+    fputs("전화번호를 입력하세요: ", stdout);
+    scanf("%s", phoneNumber);     // scanf로 입력을 받음
+    clearInputBuffer();           // 입력 버퍼를 비움
+    
+    fputs("이름을 입력하세요: ", stdout);
+    fgets(name, sizeof(name), stdin);    // fgets로 입력을 받을 수 있음
+
+    printf("전화번호: %s\n", phoneNumber);
+    printf("이름: %s\n", name);
+
+    return 0;
+}
 ==============================================================================
+/* setbuf example */
+#include <stdio.h>
 
+int main ()
+{
+  char buffer[BUFSIZ];
+  FILE *pFile1, *pFile2;
+
+  pFile1=fopen ("myfile1.txt","w");
+  pFile2=fopen ("myfile2.txt","a");
+
+  setbuf ( pFile1 , buffer );
+  fputs ("This is sent to a buffered stream",pFile1);
+  fflush (pFile1);
+
+  setbuf ( pFile2 , NULL );
+  fputs ("This is sent to an unbuffered stream",pFile2);
+
+  fclose (pFile1);
+  fclose (pFile2);
+
+  return 0;
+}
+
+In this example, two files are opened for writing. 
+ The stream associated with the file myfile1.txt is set to a user allocated buffer; 
+a writing operation to it is performed; the data is logically part of the stream, 
+but it has not been writen to the device until the fflush function is called.
+The second buffer in the example, associated with the file myfile2.txt, 
+is set to unbuffered, so the subsequent output operation is written to the device as soon as possible.
+The final state, however, is the same for both buffered and 
+unbuffered streams once the files have been closed (closing a file flushes its buffer).
 ==============================================================================
+/* snprintf example */
+#include <stdio.h>
 
+int main ()
+{
+  char buffer [100];
+  int cx;
+
+  cx = snprintf ( buffer, 100, "The half of %d is %d", 60, 60/2 );
+  if (cx>=0 && cx<100)      // check returned value
+    snprintf ( buffer+cx, 100-cx, ", and the half of that is %d.", 60/2/2 );
+  puts (buffer);
+  return 0;
+}
+Output:
+The half of 60 is 30, and the half of that is 15.
 ==============================================================================
+/* vprintf example */
+#include <stdio.h>
+#include <stdarg.h>
 
+void WriteFormatted ( const char * format, ... )
+{
+  va_list args;
+  va_start (args, format);
+  vprintf (format, args);
+  va_end (args);
+}
+
+int main ()
+{
+   WriteFormatted ("Call with %d variable argument.\n",1);
+   WriteFormatted ("Call with %d variable %s.\n",2,"arguments");
+   return 0;
+}
+The example illustrates how the WriteFormatted can be called with a different number of arguments, 
+which are on their turn passed to the vprintf function, showing the following output:
+Call with 1 variable argument.
+Call with 2 variable arguments.
 ==============================================================================
 
 ==============================================================================
