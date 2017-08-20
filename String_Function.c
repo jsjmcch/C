@@ -1480,19 +1480,181 @@ which are on their turn passed to the vprintf function, showing the following ou
 Call with 1 variable argument.
 Call with 2 variable arguments.
 ==============================================================================
+/* ctime example */
+#include <stdio.h>      /* printf */
+#include <time.h>       /* time_t, time, ctime */
 
+int main ()
+{
+  time_t rawtime;
+
+  time (&rawtime);
+  printf ("The current local time is: %s", ctime (&rawtime));
+
+  return 0;
+}
+Output:
+The current local time is: Wed Feb 13 16:06:10 2013
 ==============================================================================
+/* difftime example */
+#include <stdio.h>      /* printf */
+#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
+int main ()
+{
+  time_t now;
+  struct tm newyear;
+  double seconds;
+
+  time(&now);  /* get current time; same as: now = time(NULL)  */
+  newyear = *localtime(&now);
+ 
+  newyear.tm_hour = 0; 
+  newyear.tm_min = 0; 
+  newyear.tm_sec = 0;
+  newyear.tm_mon = 0;  
+  newyear.tm_mday = 1;
+  seconds = difftime(now,mktime(&newyear));
+
+  printf ("%.f seconds since new year in the current timezone.\n", seconds);
+  return 0;
+}
+
+Output:
+3777291 seconds since new year in the current timezone.
 ==============================================================================
+/* gmtime example */
+#include <stdio.h>      /* puts, printf */
+#include <time.h>       /* time_t, struct tm, time, gmtime */
 
+#define MST (-7)
+#define UTC (0)
+#define CCT (+8)
+
+int main ()
+{
+  time_t rawtime;
+  struct tm * ptm;
+
+  time ( &rawtime );
+  ptm = gmtime ( &rawtime );
+  puts ("Current time around the World:");
+  printf ("Phoenix, AZ (U.S.) :  %2d:%02d\n", (ptm->tm_hour+MST)%24, ptm->tm_min);
+  printf ("Reykjavik (Iceland) : %2d:%02d\n", (ptm->tm_hour+UTC)%24, ptm->tm_min);
+  printf ("Beijing (China) :     %2d:%02d\n", (ptm->tm_hour+CCT)%24, ptm->tm_min);
+
+  return 0;
+}
+
+Output:
+Current time around the World:
+Phoenix, AZ (U.S.) :    8:22
+Reykjavik (Iceland) :  15:22
+Beijing (China) :      23:22
 ==============================================================================
+/* Convert time_t to tm as local time Uses the value pointed by timer to fill 
+a tm structure with the values that represent the corresponding time, 
+expressed for the local timezone. */
+/* localtime example */
+#include <stdio.h>      /* puts, printf */
+#include <time.h>       /* time_t, struct tm, time, localtime */
 
+int main ()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+  printf ("Current local time and date: %s", asctime(timeinfo));
+
+  return 0;
+}
+
+Output:
+Current local time and date: Wed Feb 13 17:17:11 2013
 ==============================================================================
+/* Convert tm structure to time_t */
+/* mktime example: weekday calculator */
+#include <stdio.h>      /* printf, scanf */
+#include <time.h>       /* time_t, struct tm, time, mktime */
 
+int main ()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+  int year, month ,day;
+  const char * weekday[] = { "Sunday", "Monday",
+                             "Tuesday", "Wednesday",
+                             "Thursday", "Friday", "Saturday"};
+
+  /* prompt user for date */
+  printf ("Enter year: "); fflush(stdout); scanf ("%d",&year);
+  printf ("Enter month: "); fflush(stdout); scanf ("%d",&month);
+  printf ("Enter day: "); fflush(stdout); scanf ("%d",&day);
+
+  /* get current timeinfo and modify it to the user's choice */
+  time ( &rawtime );
+  timeinfo = localtime ( &rawtime );
+  timeinfo->tm_year = year - 1900;
+  timeinfo->tm_mon = month - 1;
+  timeinfo->tm_mday = day;
+
+  /* call mktime: timeinfo->tm_wday will be set */
+  mktime ( timeinfo );
+  printf ("That day is a %s.\n", weekday[timeinfo->tm_wday]);
+
+  return 0;
+}
+Output:
+Enter year: 2000
+Enter month: 5
+Enter day: 20
+That day is a Saturday.
 ==============================================================================
+/* strftime example */
+#include <stdio.h>      /* puts */
+#include <time.h>       /* time_t, struct tm, time, localtime, strftime */
 
+int main ()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer [80];
+
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+
+  strftime (buffer,80,"Now it's %I:%M%p.",timeinfo);
+  puts (buffer);
+
+  return 0;
+}
+
+Example output:
+Now it's 03:21PM.
 ==============================================================================
+/* time example */
+#include <stdio.h>      /* printf */
+#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
+int main ()
+{
+  time_t timer;
+  struct tm y2k = {0};
+  double seconds;
+
+  y2k.tm_hour = 0;   y2k.tm_min = 0; y2k.tm_sec = 0;
+  y2k.tm_year = 100; y2k.tm_mon = 0; y2k.tm_mday = 1;
+
+  time(&timer);  /* get current time; same as: timer = time(NULL)  */
+  seconds = difftime(timer,mktime(&y2k));
+  printf ("%.f seconds since January 1, 2000 in the current timezone", seconds);
+
+  return 0;
+}
+Possible output:
+414086872 seconds since January 1, 2000 in the current timezone
 ==============================================================================
 
 ==============================================================================
