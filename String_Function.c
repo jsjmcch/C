@@ -1,3 +1,11 @@
+* Library Function
+1. IBM Knowledge Center 
+ - https://www.ibm.com/support/knowledgecenter/ko/ssw_ibm_i_73/rtref/keyword.htm
+2. Cplusplus
+ - http://www.cplusplus.com/reference/
+3. Falinux.com
+ - http://forum.falinux.com/zbxe/index.php?mid=C_LIB
+==============================================================================
 /* strcpy example */
 #include <stdio.h>
 #include <string.h>
@@ -853,6 +861,146 @@ int main( )
     }
     return 0;
 }
+==============================================================================
+/* feof example: byte counter */
+#include <stdio.h>
+
+int main ()
+{
+  FILE * pFile;
+  int n = 0;
+  pFile = fopen ("myfile.txt","rb");
+  if (pFile==NULL) perror ("Error opening file");
+  else
+  {
+    while (fgetc(pFile) != EOF) {
+      ++n;
+    }
+    if (feof(pFile)) {
+      puts ("End-of-File reached.");
+      printf ("Total number of bytes read: %d\n", n);
+    }
+    else puts ("End-of-File was not reached.");
+    fclose (pFile);
+  }
+  return 0;
+}
+==============================================================================
+/* log example */
+#include <stdio.h>      /* printf */
+#include <math.h>       /* log */
+
+int main ()
+{
+  double param, result;
+  param = 5.5;
+  result = log (param);
+  printf ("log(%f) = %f\n", param, result );
+  return 0;
+}
+
+Output:
+log(5.500000) = 1.704748
+==============================================================================
+/* pow example */
+#include <stdio.h>      /* printf */
+#include <math.h>       /* pow */
+
+int main ()
+{
+  printf ("7 ^ 3 = %f\n", pow (7.0, 3.0) );
+  printf ("4.73 ^ 12 = %f\n", pow (4.73, 12.0) );
+  printf ("32.01 ^ 1.54 = %f\n", pow (32.01, 1.54) );
+  return 0;
+}
+
+Output:
+7 ^ 3 = 343.000000
+4.73 ^ 12 = 125410439.217423
+32.01 ^ 1.54 = 208.036691
+==============================================================================
+The smallest integral value that is not less than x (as a floating-point value).
+/* ceil example */
+#include <stdio.h>      /* printf */
+#include <math.h>       /* ceil */
+
+int main ()
+{
+  printf ( "ceil of 2.3 is %.1f\n", ceil(2.3) );
+  printf ( "ceil of 3.8 is %.1f\n", ceil(3.8) );
+  printf ( "ceil of -2.3 is %.1f\n", ceil(-2.3) );
+  printf ( "ceil of -3.8 is %.1f\n", ceil(-3.8) );
+  return 0;
+}
+
+Output:
+ceil of 2.3 is 3.0
+ceil of 3.8 is 4.0
+ceil of -2.3 is -2.0
+ceil of -3.8 is -3.0
+==============================================================================
+
+  /* sqrt example */
+#include <stdio.h>      /* printf */
+#include <math.h>       /* sqrt */
+
+int main ()
+{
+  double param, result;
+  param = 1024.0;
+  result = sqrt (param);
+  printf ("sqrt(%f) = %f\n", param, result );
+  return 0;
+}
+
+Output:
+sqrt(1024.000000) = 32.000000
+==============================================================================
+/* round vs floor vs ceil vs trunc */
+#include <stdio.h>      /* printf */
+#include <math.h>       /* round, floor, ceil, trunc */
+
+int main ()
+{
+  const char * format = "%.1f \t%.1f \t%.1f \t%.1f \t%.1f\n";
+  printf ("value\tround\tfloor\tceil\ttrunc\n");
+  printf ("-----\t-----\t-----\t----\t-----\n");
+  printf (format, 2.3,round( 2.3),floor( 2.3),ceil( 2.3),trunc( 2.3));
+  printf (format, 3.8,round( 3.8),floor( 3.8),ceil( 3.8),trunc( 3.8));
+  printf (format, 5.5,round( 5.5),floor( 5.5),ceil( 5.5),trunc( 5.5));
+  printf (format,-2.3,round(-2.3),floor(-2.3),ceil(-2.3),trunc(-2.3));
+  printf (format,-3.8,round(-3.8),floor(-3.8),ceil(-3.8),trunc(-3.8));
+  printf (format,-5.5,round(-5.5),floor(-5.5),ceil(-5.5),trunc(-5.5));
+  return 0;
+}
+
+Output:
+value   round   floor   ceil    trunc
+-----   -----   -----   ----    -----
+ 2.3     2.0     2.0     3.0     2.0
+ 3.8     4.0     3.0     4.0     3.0
+ 5.5     6.0     5.0     6.0     5.0
+-2.3    -2.0    -3.0    -2.0    -2.0
+-3.8    -4.0    -4.0    -3.0    -3.0
+-5.5    -6.0    -6.0    -5.0    -5.0
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
 ==============================================================================
 
 ==============================================================================
