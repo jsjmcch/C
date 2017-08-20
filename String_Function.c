@@ -984,21 +984,178 @@ value   round   floor   ceil    trunc
 -3.8    -4.0    -4.0    -3.0    -3.0
 -5.5    -6.0    -6.0    -5.0    -5.0
 ==============================================================================
+// get filename list in directory.
+ #include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <error.h>
 
+int main()
+{
+    DIR *dir;
+    struct dirent *ent;
+    dir = opendir ("./");
+    if (dir != NULL) {
+        /* print all the files and directories within directory */
+        while ((ent = readdir (dir)) != NULL) {
+            printf ("%s\n", ent->d_name);
+        }
+
+        closedir (dir);
+    } else {
+        /* could not open directory */
+        perror ("");
+        return EXIT_FAILURE;
+    }
+}
 ==============================================================================
-
+/* fflush example */
+#include <stdio.h>
+char mybuffer[80];
+int main()
+{
+   FILE * pFile;
+   pFile = fopen ("example.txt","r+");
+   if (pFile == NULL) perror ("Error opening file");
+   else {
+     fputs ("test",pFile);
+     fflush (pFile);    // flushing or repositioning required
+     fgets (mybuffer,80,pFile);
+     puts (mybuffer);
+     fclose (pFile);
+     return 0;
+  }
+}
 ==============================================================================
-
+/* fgetc example: money counter */
+#include <stdio.h>
+int main ()
+{
+  FILE * pFile;
+  int c;
+  int n = 0;
+  pFile=fopen ("myfile.txt","r");
+  if (pFile==NULL) perror ("Error opening file");
+  else
+  {
+    do {
+      c = fgetc (pFile);
+      if (c == '$') n++;
+    } while (c != EOF);
+    fclose (pFile);
+    printf ("The file contains %d dollar sign characters ($).\n",n);
+  }
+  return 0;
+}
 ==============================================================================
+/* fgets example */
+#include <stdio.h>
 
+int main()
+{
+   FILE * pFile;
+   char mystring [100];
+
+   pFile = fopen ("myfile.txt" , "r");
+   if (pFile == NULL) perror ("Error opening file");
+   else {
+     if ( fgets (mystring , 100 , pFile) != NULL )
+       puts (mystring);
+     fclose (pFile);
+   }
+   return 0;
+}
 ==============================================================================
+/* fprintf example */
+#include <stdio.h>
 
+int main ()
+{
+   FILE * pFile;
+   int n;
+   char name [100];
+
+   pFile = fopen ("myfile.txt","w");
+   for (n=0 ; n<3 ; n++)
+   {
+     puts ("please, enter a name: ");
+     gets (name);
+     fprintf (pFile, "Name %d [%-10.10s]\n",n+1,name);
+   }
+   fclose (pFile);
+
+   return 0;
+}
 ==============================================================================
+/* fputc example: alphabet writer */
+#include <stdio.h>
 
+int main ()
+{
+  FILE * pFile;
+  char c;
+  pFile = fopen ("alphabet.txt","w");
+  if (pFile!=NULL) {
+    for (c = 'A' ; c <= 'Z' ; c++)
+      fputc ( c , pFile );
+    fclose (pFile);
+  }
+  return 0;
+}
+This program creates a file called alphabet.txt and writes ABCDEFGHIJKLMNOPQRSTUVWXYZ to it. 
 ==============================================================================
+/* fputs example */
+#include <stdio.h>
 
+int main ()
+{
+   FILE * pFile;
+   char sentence [256];
+
+   printf ("Enter sentence to append: ");
+   fgets (sentence,256,stdin);
+   pFile = fopen ("mylog.txt","a");
+   fputs (sentence,pFile);
+   fclose (pFile);
+   return 0;
+}
 ==============================================================================
+/* fread example: read an entire file */
+#include <stdio.h>
+#include <stdlib.h>
 
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "myfile.bin" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminate
+  fclose (pFile);
+  free (buffer);
+  return 0;
+}
+This code loads myfile.bin into a dynamically allocated memory buffer, 
+which can be used to manipulate the content of a file as an array.
 ==============================================================================
 
 ==============================================================================
