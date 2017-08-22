@@ -1656,7 +1656,224 @@ int main ()
 Possible output:
 414086872 seconds since January 1, 2000 in the current timezone
 ==============================================================================
+Description
+The C library function void isalpha(int c) checks if the passed character is alphabetic.
 
+Declaration
+Following is the declaration for isalpha() function.
+
+int isalpha(int c);
+Parameters
+c − This is the character to be checked.
+
+Return Value
+This function returns non-zero value if c is an alphabet, else it returns 0.
+
+Example
+The following example shows the usage of isalpha() function.
+
+#include <stdio.h>
+#include <ctype.h>
+
+int main()
+{
+   int var1 = 'd';
+   int var2 = '2';
+   int var3 = '\t';
+   int var4 = ' ';
+    
+   if( isalpha(var1) )
+   {
+      printf("var1 = |%c| is an alphabet\n", var1 );
+   }
+   else
+   {
+      printf("var1 = |%c| is not an alphabet\n", var1 );
+   }
+   
+   if( isalpha(var2) )
+   {
+      printf("var2 = |%c| is an alphabet\n", var2 );
+   }
+   else
+   {
+      printf("var2 = |%c| is not an alphabet\n", var2 );
+   }
+   
+   if( isalpha(var3) )
+   {
+      printf("var3 = |%c| is an alphabet\n", var3 );
+   }
+   else
+   {
+      printf("var3 = |%c| is not an alphabet\n", var3 );
+   }
+   
+   if( isalpha(var4) )
+   {
+      printf("var4 = |%c| is an alphabet\n", var4 );
+   }
+   else
+   {
+      printf("var4 = |%c| is not an alphabet\n", var4 );
+   }
+   
+   return(0);
+}
+Let us compile and run the above program, to produce the following result −
+
+var1 = |d| is an alphabet                                                   
+var2 = |2| is not an alphabet                                               
+var3 = |        | is not an alphabet                                        
+var4 = | | is not an alphabet  
+==============================================================================
+/* isalpha example */
+#include <stdio.h>
+#include <ctype.h>
+int main ()
+{
+  int i=0;
+  char str[]="C++";
+  while (str[i])
+  {
+    if (isalpha(str[i])) printf ("character %c is alphabetic\n",str[i]);
+    else printf ("character %c is not alphabetic\n",str[i]);
+    i++;
+  }
+  return 0;
+}
+
+Output:
+character C is alphabetic
+character + is not alphabetic
+character + is not alphabetic
+==============================================================================
+/* isblank example */
+#include <stdio.h>
+#include <ctype.h>
+int main ()
+{
+  char c;
+  int i=0;
+  char str[]="Example sentence to test isblank\n";
+  while (str[i])
+  {
+    c=str[i];
+    if (isblank(c)) c='\n';
+    putchar (c);
+    i++;
+  }
+  return 0;
+}
+
+This code prints out the C string character by character, replacing any blank character by a newline character. Output:
+Example
+sentence
+to
+test
+isblank
+==============================================================================
+/* isalnum example */
+#include <stdio.h>
+#include <ctype.h>
+int main ()
+{
+  int i;
+  char str[]="c3po...";
+  i=0;
+  while (isalnum(str[i])) i++;
+  printf ("The first %d characters are alphanumeric.\n",i);
+  return 0;
+}
+
+Output:
+The first 4 characters are alphanumeric.
+
+==============================================================================
+/* isdigit example */
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+int main ()
+{
+  char str[]="1776ad";
+  int year;
+  if (isdigit(str[0]))
+  {
+    year = atoi (str);
+    printf ("The year that followed %d was %d.\n",year,year+1);
+  }
+  return 0;
+}
+Output
+The year that followed 1776 was 1777
+==============================================================================
+/* islower example */
+#include <stdio.h>
+#include <ctype.h>
+int main ()
+{
+  int i=0;
+  char str[]="Test String.\n";
+  char c;
+  while (str[i])
+  {
+    c=str[i];
+    if (islower(c)) c=toupper(c);
+    putchar (c);
+    i++;
+  }
+  return 0;
+}
+Output:
+TEST STRING.
+
+==============================================================================
+/* isupper example */
+#include <stdio.h>
+#include <ctype.h>
+int main ()
+{
+  int i=0;
+  char str[]="Test String.\n";
+  char c;
+  while (str[i])
+  {
+    c=str[i];
+    if (isupper(c)) c=tolower(c);
+    putchar (c);
+    i++;
+  }
+  return 0;
+}
+
+Output:
+test string.
+ 
+==============================================================================
+/* isxdigit example */
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+int main ()
+{
+  char str[]="ffff";
+  long int number;
+  if (isxdigit(str[0]))
+  {
+    number = strtol (str,NULL,16);
+    printf ("The hexadecimal number %lx is %ld.\n",number,number);
+  }
+  return 0;
+}
+isxdigit is used to check if the first character in str is a valid hexadecimal digit and therefore a valid candidate to be converted by strtol into an integral value. Output:
+The hexadecimal number ffff is 65535.
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+ 
 ==============================================================================
 
 ==============================================================================
@@ -1664,8 +1881,22 @@ Possible output:
 ==============================================================================
 
 ==============================================================================
-
+ 
 ==============================================================================
 
 ==============================================================================
 
+
+==============================================================================
+ 
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+
+==============================================================================
+ 
+==============================================================================
+
+==============================================================================
