@@ -1869,6 +1869,16 @@ int main ()
 isxdigit is used to check if the first character in str is a valid hexadecimal digit and therefore a valid candidate to be converted by strtol into an integral value. Output:
 The hexadecimal number ffff is 65535.
 ==============================================================================
+-헤더	stdlib.h
+-형태	long strtol(const char *restrict str, char **endptr, int base);
+-인수	
+char *str	    정수로 변환할 문자열
+char **endptr	숫자로 변경하지 못하는 문자열의 시작 위치
+int base	     문자열이 가지고 있는 숫자의 진수 (2~32)
+
+-반환	
+long	10진 long형 정수 값
+
 /* strtol example */
 #include <stdio.h>      /* printf */
 #include <stdlib.h>     /* strtol */
