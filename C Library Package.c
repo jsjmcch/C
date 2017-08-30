@@ -2012,11 +2012,185 @@ int main( void)
 1184746481
 Wed Jul 18 17:14:41 2007
 ==============================================================================
+* localtime	
+time_t 값에서 표준시간지역 시간 값을 구하며, 시간 정보는 아래와 같은 struct 값으로 구해집니다.
+struct tm
+{
+  int tm_sec;			/* Seconds.	[0-60] (1 leap second) */
+  int tm_min;			/* Minutes.	[0-59] */
+  int tm_hour;			/* Hours.	[0-23] */
+  int tm_mday;			/* Day.		[1-31] */
+  int tm_mon;			/* Month.	[0-11] */
+  int tm_year;			/* Year	- 1900.  */
+  int tm_wday;			/* Day of week.	[0-6] */
+  int tm_yday;			/* Days in year.[0-365]	*/
+  int tm_isdst;			/* DST.		[-1/0/1]*/
 
-==============================================================================
+#ifdef	__USE_BSD
+  long int tm_gmtoff;		/* Seconds east of UTC.  */
+  __const char *tm_zone;	/* Timezone abbreviation.  */
+#else
+  long int __tm_gmtoff;		/* Seconds east of UTC.  */
+  __const char *__tm_zone;	/* Timezone abbreviation.  */
+#endif
+};
+
+헤더	time.h
+형태	struct tm *localtime(const time_t *t);
+인수	time_t *t	시간 time_t 값
+반환	struct tm *	시간에 대한 struct tm 값의 포인터
  
-==============================================================================
+#include <stdio.h>
+#include <time.h>
 
+int main( void)
+{
+   char      *week[] = { "일", "월", "화", "수", "목", "금", "토"};
+   time_t     current_time;
+   struct tm *struct_time;
+
+   time( &current_time);
+
+   struct_time = localtime( &current_time);
+
+   printf( "%4d 년n",       struct_time->tm_year +1900);
+   printf( "  %2d 월(0-11)n", struct_time->tm_mon  +1   );
+   printf( "  %2d 일(1-31)n", struct_time->tm_mday      );
+   printf( "%s요일n"        , week[struct_time->tm_wday]);
+   printf( "  %2d 시(0-23)n", struct_time->tm_hour      );
+   printf( "  %2d 분(0-59)n", struct_time->tm_min       );
+   printf( "  %2d 초(0-59)n", struct_time->tm_sec       );
+   printf( "1월 1일 이후의 날짜 수: %3d n", struct_time->tm_yday);
+
+   if      ( 0 <  struct_time->tm_isdst)  printf( "썸머 타임 사용n"     );
+   else if ( 0 == struct_time->tm_isdst)  printf( "썸머 타임 사용 안함n");
+   else                                   printf( "썸머 타임 사용 불가n");
+
+   return 0;
+}
+
+* output
+]$ ./a.out
+2007 년
+   7 월(0-11)
+  22 일(1-31)
+일요일
+  22 시(0-23)
+  37 분(0-59)
+  20 초(0-59)
+1월 1일 이후의 날짜 수: 202 
+썸머 타임 사용 안함
+==============================================================================
+* mktime
+struct tm 값으로 time_t 형 시간 값을 구합니다. 즉, 프로그래머가 원하는 시간의 time_t 값을 구합니다. struct tm의 구조는 아래와 같습니다.
+ 
+time_t 값을 구하기 위해 생각하기 힘든 요일정보나 1월 1일부터의 원하는 시간까지의 일 수 값을 모두 계산해서 넣어 주어야 할까요? 
+그럼 너무 불편하지요. 직접 확인해 보니까, 년/월/일/시/분/초와 확신을 위해 썸머 타밈의 적용 여부만 지정해도 정확한 time_t 값을 구할 수 있었습니다. 
+예제를 참고하여 주십시오.
+
+헤더	time.h
+형태	time_t mktime(struct tm *timeptr);
+인수	struct tm *timeptr	time_t 값을 구하기 위한 struct tm 값
+반환	time_t	struct tm 값으로 구해진 시간 정수 값
+
+ 예제	
+#include 
+#include 
+
+int main( void)
+{
+   char      *week[] = { "일", "월", "화", "수", "목", "금", "토"};
+   time_t     user_time;
+   struct tm  user_stime;
+   struct tm *ptr_stime;
+
+   user_stime.tm_year   = 2007   -1900;   // 주의 :년도는 1900년부터 시작
+   user_stime.tm_mon    = 7      -1;      // 주의 :월은 0부터 시작
+   user_stime.tm_mday   = 25;
+   user_stime.tm_hour   = 10;
+   user_stime.tm_min    = 12;
+   user_stime.tm_sec    = 55;
+   user_stime.tm_isdst  = 0;           // 썸머 타임 사용 안함
+
+   user_time   = mktime( &user_stime);
+   ptr_stime = localtime( &user_time);
+
+   printf( "%4d 년n"        , ptr_stime->tm_year +1900);
+   printf( "  %2d 월(0-11)n", ptr_stime->tm_mon  +1   );
+   printf( "  %2d 일(1-31)n", ptr_stime->tm_mday      );
+   printf( "%s요일n"        , week[ptr_stime->tm_wday]);
+   printf( "  %2d 시(0-23)n", ptr_stime->tm_hour      );
+   printf( "  %2d 분(0-59)n", ptr_stime->tm_min       );
+   printf( "  %2d 초(0-59)n", ptr_stime->tm_sec       );
+   printf( "1월 1일 이후의 날짜 수: %3d n", ptr_stime->tm_yday);
+   if      ( 0 <  ptr_stime->tm_isdst)    printf( "썸머 타임 사용n"     );
+   else if ( 0 == ptr_stime->tm_isdst)    printf( "썸머 타임 사용 안함n");
+   else                                   printf( "썸머 타임 사용 불가n");
+
+   return 0;
+}
+]$ ./a.out
+2007 년
+   7 월(0-11)
+  25 일(1-31)
+수요일
+  10 시(0-23)
+  12 분(0-59)
+  55 초(0-59)
+1월 1일 이후의 날짜 수: 205 
+썸머 타임 사용 안함
+==============================================================================
+* difftime	
+시간의 차이를 계산합니다. 예제에서는 2007년 7월 1일부터 프로그램을 시작하는 시간 까지의 일 수와 시간 차이를 구합니다.
+헤더	time.h
+형태	double difftime(time_t time1, time_t time0);
+인수	time_t time1	시간 계산에서 빼어지는 시간
+time_t time0	시간 계산에서 빼는 시간
+반환	double	두 시간의 차이
+
+예제	
+#include <stdio.h>
+#include <time.h>
+
+int main( void)
+{
+   time_t     tm_st;
+   time_t     tm_nd;
+   int        tm_day, tm_hour, tm_min, tm_sec;
+   double     d_diff;
+   struct tm  user_stime;
+
+   user_stime.tm_year   = 2007   -1900;   // 주의 :년도는 1900년부터 시작
+   user_stime.tm_mon    = 7      -1;      // 주의 :월은 0부터 시작
+   user_stime.tm_mday   = 1;
+   user_stime.tm_hour   = 10;
+   user_stime.tm_min    = 12;
+   user_stime.tm_sec    = 55;
+   user_stime.tm_isdst  = 0;              // 썸머 타임 사용 안함
+
+   tm_st = mktime( &user_stime);
+   time( &tm_nd);
+
+   d_diff   = difftime( tm_nd, tm_st);
+
+   tm_day   = d_diff / ( 60 *60 * 24);
+   d_diff   = d_diff - ( tm_day *60 *60 *24);
+
+   tm_hour  = d_diff / ( 60 *60);
+   d_diff   = d_diff - ( tm_hour *60 *60);
+
+   tm_min   = d_diff / 60;
+   d_diff   = d_diff - ( tm_min *60);
+
+   tm_sec   = d_diff;
+
+   printf( "2007년 7월 1일부터 지금까지는 %d일 %d시 %d분 %d초 지났음\n", tm_day, tm_hour, tm_min, tm_sec);
+   return 0;
+}
+
+]$ ./a.out
+2007년 7월 1일부터 지금까지는 21일 18시 57분 9초 지났음
+]$
 ==============================================================================
 
 
