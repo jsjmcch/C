@@ -1898,13 +1898,119 @@ int main ()
 Output:
 The decimal equivalents are: 2001, 6340800, -3624224 and 7340031
 ==============================================================================
+/* clock example: frequency of primes */
+#include <stdio.h>      /* printf */
+#include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
+#include <math.h>       /* sqrt */
 
+int frequency_of_primes (int n) {
+  int i,j;
+  int freq=n-1;
+  for (i=2; i<=n; ++i) for (j=sqrt(i);j>1;--j) if (i%j==0) {--freq; break;}
+  return freq;
+}
+
+int main ()
+{
+  clock_t t;
+  int f;
+  t = clock();
+  printf ("Calculating...\n");
+  f = frequency_of_primes (99999);
+  printf ("The number of primes lower than 100,000 is: %d\n",f);
+  t = clock() - t;
+  printf ("It took me %d clicks (%f seconds).\n",t,((float)t)/CLOCKS_PER_SEC);
+  return 0;
+}
+Output:
+
+Calculating...
+The number of primes lower than 100,000 is: 9592
+It took me 143 clicks (0.143000 seconds).
 ==============================================================================
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+
+#define setClock() (clock() + 500000)
+
+int main(void) {
+    clock_t clk_start = setClock();
+
+    while ( -1 ) {
+        if (clock() > clk_start) {
+            clk_start = setClock();
+            printf("%ld..\n", clk_start);
+        }
+    }
+    return 0;
+}
+
+-- 출력은 --
+1010000..
+1520000..
+2030000..
+2540000..
+3050000..
+3560000..
+4070000..
+4580000..
+5090000..
+5600000..
  
 ==============================================================================
+/* time example */
+#include <stdio.h>      /* printf */
+#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
+int main ()
+{
+  time_t timer;
+  struct tm y2k = {0};
+  double seconds;
+
+  y2k.tm_hour = 0;   y2k.tm_min = 0; y2k.tm_sec = 0;
+  y2k.tm_year = 100; y2k.tm_mon = 0; y2k.tm_mday = 1;
+
+  time(&timer);  /* get current time; same as: timer = time(NULL)  */
+
+  seconds = difftime(timer,mktime(&y2k));
+
+  printf ("%.f seconds since January 1, 2000 in the current timezone", seconds);
+
+  return 0;
+}
+
+Possible output:
+414086872 seconds since January 1, 2000 in the current timezone
 ==============================================================================
+설명	
+시스템의 시간을 구합니다. 구해지는 시간은 1970년 1월 1일 0시부터 함수를 호출할 때 까지의 초단위입니다. 
+그러므로 time()함수에서 구한 값으로는 지금이 몇 시인지 알기가 쉽지 않습니다. 
+time()에서 구한 시간 정보를 알기 쉽게 문자열을 만들기 위해서는 ctime()함수를 이용하면 됩니다.
+ 
+헤더	time.h
+형태	time_t time(time_t *t);
+인수	time_t *t	시간정보를 받을 변수
+반환	time_t	1970년 1월 1일 0시부터 함수를 호출할 때 까지의 초 카운트
 
+예제	
+#include <stdio.h>
+#include <time.h>
+
+int main( void)
+{
+   time_t   current_time;
+   time( &current_time);
+
+   printf( "%ldn", current_time);
+   printf( ctime( &current_time));
+
+   return 0;
+}
+]$ ./a.out
+1184746481
+Wed Jul 18 17:14:41 2007
 ==============================================================================
 
 ==============================================================================
