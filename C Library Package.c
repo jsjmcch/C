@@ -2192,16 +2192,241 @@ int main( void)
 2007년 7월 1일부터 지금까지는 21일 18시 57분 9초 지났음
 ]$
 ==============================================================================
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 
+int main(void) {
+    int i,j;
+    int starttime, endtime;
+    time_t tm_st;
+    time_t tm_nd;
+    double diff_time;
+    struct tm user_stime;
+    int tm_day, tm_hour, tm_min, tm_sec;
+
+    time( &tm_st ); // current_time
+
+    while(1) {
+        sleep(2);
+        time( &tm_nd );
+
+        diff_time = difftime( tm_nd, tm_st );
+
+        tm_day = diff_time / (60 * 60 * 24);
+        diff_time = diff_time - (tm_day * 60 * 60 * 24);
+
+        tm_hour = diff_time / (60 * 60);
+        diff_time = diff_time - (tm_hour * 60 * 60);
+
+        tm_min = diff_time / 60;
+        diff_time = diff_time - (tm_min * 60);
+
+        tm_sec = diff_time;
+
+        printf("diff_time = %d일, %d시, %d분, %d초 \n", tm_day, tm_hour, tm_min, tm_sec);
+    }
+
+    return 0;
+}
+
+* output
+$ ./difftime2.exe
+diff_time = 0일, 0시, 0분, 2초
+diff_time = 0일, 0시, 0분, 4초
+diff_time = 0일, 0시, 0분, 6초
+diff_time = 0일, 0시, 0분, 8초
+diff_time = 0일, 0시, 0분, 10초
+diff_time = 0일, 0시, 0분, 12초
+diff_time = 0일, 0시, 0분, 14초
+diff_time = 0일, 0시, 0분, 16초
+diff_time = 0일, 0시, 0분, 18초
+...
 
 ==============================================================================
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+
+void myalarm()
+{
+    printf("ding dong dang\n");
+}
+
+int main()
+{
+    printf("alarm setting\n");
+    // SIGALRM 이 발생하면 myalarm() 함수를 실행한다.
+    signal(SIGALRM, myalarm);
+    // 알람을 1초로 설정한다.
+    alarm(1);
  
-==============================================================================
+    while(1)
+    {
+        printf("ok\n");
+        // 신호를 기다린다.
+        pause();
+        // alarm 을 2초로 설정한다.
+        alarm(2);
+    }
+}
+
+* output
+$ ./alarm_signal.exe
+alarm setting
+ok
+ding dong dang
+ok
+ding dong dang
+ok
+...
 
 ==============================================================================
+* gettimeofday
+gettimeofday()은 time(2)와 매우 비슷하지만 마이크로초 단위의 시간 까지 되돌려준다. 
+현재는 time(2)를 대신해서 쓰이고 있으며, 가능한 time(2)대신 이 함수를 사용하는 걸 권장한다.
+
+첫번째 인자인 tv는 현재 시스템 시간을 저장하기 위한 구조체로 다음과 같이 정의되어 있다.
+
+struct timeval
+{
+    long tv_sec;       // 초
+    long tv_usec;      // 마이크로초
+}
+		
+두번째 인자인 tz은 타임존을 설정하기 위해서 사용된다.
+struct timezone
+{
+    int tz_minuteswest:  // 그리니치 서측분차  
+    int tz_dsttime       // DST 보정타입(일광 절약시간)
+}
+		
+현재 timezone 구조체는 사용되지 않고 있으며, 앞으로도 지원되지 않을 것이다. 
+간혹 커널 소스등에서 이 필드가 사용되는 경우가 있는데, 모든 경우에 버그로 판단되어서 무시한다. 
+복잡하게 생각할 필요 없이 tz은 NULL을 사용하도록 한다.
+ 
+성공하면 0 실패하면 -1을 리턴한다.
+ 
+#include <stdio.h>
+#include <sys/time.h>
+#include <unistd.h>
+
+int main()
+{
+    struct timeval mytime;
+
+    // get current time
+    gettimeofday(&mytime, NULL);
+    printf("%ld : %ld\n", mytime.tv_sec, mytime.tv_usec);
+
+    // current time - 1hour
+    mytime.tv_sec -= 3600;
+    settimeofday(&mytime, NULL);
+
+    return 0;
+}
+
 
 ==============================================================================
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/time.h>
 
+#define SOCK_READ_TIME_MAX 3
+
+long getTimeGap( struct timeval *st, struct timeval *et)
+{
+    struct timeval rt;
+    long diffT = 0L;
+
+    rt.tv_sec = et->tv_sec - st->tv_sec;
+    rt.tv_usec = et->tv_usec - st->tv_usec;
+
+    if( rt.tv_usec < 0 ) {
+        rt.tv_sec--;
+        rt.tv_usec += 1000000L;
+    }
+
+    diffT = (rt.tv_sec*1000000L) + rt.tv_usec;
+
+    return diffT;
+}
+
+int main() {
+    struct timeval startTime;
+    struct timeval endTime;
+    long diffTime = 0L;
+
+    gettimeofday(&startTime, NULL);
+
+    while(1) {
+        gettimeofday(&endTime, NULL);
+        diffTime = getTimeGap(&startTime, &endTime);
+        if(diffTime > (SOCK_READ_TIME_MAX * 1000000L)) {
+            printf(" read time out \n");
+            printf(" difftime = %ld \n", diffTime);
+            gettimeofday(&startTime, NULL);
+        }
+    }
+
+    return 0;
+}
+* output
+$ ./gettimeofday3.exe
+ read time out
+ difftime = 3000115
+ read time out
+ difftime = 3000115
+ read time out
+ difftime = 3000115
+
+==============================================================================
+#include <stdio.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#define SOCK_READ_TIME_MAX 3
+
+int main()
+{
+    struct timeval timerStart;
+    struct timeval timerEnd;
+    long interval = 0;
+
+    // get start time
+    gettimeofday(&timerStart, NULL);
+    printf("%ld : %ld\n", timerStart.tv_sec, timerStart.tv_usec);
+
+    while(1) {
+
+
+        gettimeofday(&timerEnd, NULL);
+        interval = (((timerEnd.tv_sec - timerStart.tv_sec) * 1000) +
+                ((timerEnd.tv_usec - timerStart.tv_usec) / 1000) / 1000);
+
+        if( interval > (SOCK_READ_TIME_MAX * 1000)) {
+            printf(" read time out\n");
+            printf("diff = %ld : %ld\n",
+                timerEnd.tv_sec - timerStart.tv_sec,
+                labs(timerEnd.tv_usec - timerStart.tv_usec));
+
+            gettimeofday(&timerStart, NULL);
+        }
+
+    }
+
+    return 0;
+}
+* output
+$ ./gettimeofday2.exe
+1504145540 : 924435
+ read time out
+diff = 4 : 923710
+ read time out
+diff = 4 : 154
+ read time out
+diff = 4 : 823
 ==============================================================================
  
 ==============================================================================
