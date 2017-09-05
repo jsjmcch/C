@@ -2430,6 +2430,28 @@ diff = 4 : 154
  read time out
 diff = 4 : 823
 ==============================================================================
+복사할 문자열 크기에 맞는 메모리를 확보한 후 문자열을 복사한 후, 확보한 메모리의 포인터를 반환해 줍니다.
+
+- 헤더 string.h 
+- 형태 char * strdup( const char *str);  
+- 인수 : char *str  복사할 문자열   
+- 반환 확보된 문자열 메모리의 첫 주소를 반환 
+
+#include <stdio.h>
+#include <string.h>
+
+int main( void)
+{
+   char *ptr;
+  
+   ptr = strdup( "forum.falinux.com");
+   printf( "%s\n", ptr);
+   free(ptr);
+   return 0;
+}
+* output
+]$ ./a.out
+forum.falinux.com
 
 ==============================================================================
 
