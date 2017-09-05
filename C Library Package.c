@@ -1256,6 +1256,15 @@ int main ()
   return 0;
 }
 ==============================================================================
+설명    파일에 버퍼 내용을 쓰기합니다.
+헤더    stdio.h
+형태    size_t fwrite( void *ptr, size_t size, size_t nitems, FILE *stream);
+인수    void *ptr	파일 내용에 출력할 메모리 포인터
+	size_t size	데이터 하나의 크기
+	size_t nitems	쓰기할 데이터의 개수
+	FILE *stream	대상 파일 스트림
+반환    int  출력한 데이터 개수를 반환하며, 오류가 발생하면 -1을 반환
+
 /* fwrite example : write buffer */
 #include <stdio.h>
 
