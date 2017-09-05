@@ -2454,5 +2454,44 @@ int main( void)
 forum.falinux.com
 
 ==============================================================================
+인수로 받은 문자가 영문자 인지 숫자 문자인지를 판별합니다.
+ 
+헤더	ctype.h
+형태	int isalnum( int c)
+인수	
+	int c	판별할 문자
+반환	
+	0 !=	c가 영문자 또는 숫자
+	0 =	c가 영문자도 숫자도 아님
 
+#include <stdio.h>
+#include <ctype.h>
+
+int main( void)
+{
+   int   ch1 = '#';
+   int   ch2 = 'a';
+   int   ch3 = '1';
+   
+   if ( isalnum( ch1))
+      printf( "%c는 영문이나 숫자입니다.\n", ch1);
+   else
+      printf( "%c는 영문이나 숫자가 아닙니다.\n", ch1);
+
+   if ( isalnum( ch2))
+      printf( "%c는 영문이나 숫자입니다.\n", ch2);
+   else
+      printf( "%c는 영문이나 숫자가 아닙니다.\n", ch2);
+
+   if ( isalnum( ch3))
+      printf( "%c는 영문이나 숫자입니다.\n", ch3);
+   else
+      printf( "%c는 영문이나 숫자가 아닙니다.\n", ch3);
+      
+   return 0;
+}
+]$ ./a.out
+#는 영문이나 숫자가 아닙니다.
+a는 영문이나 숫자입니다.
+1는 영문이나 숫자입니다.
 ==============================================================================
