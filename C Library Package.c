@@ -2504,3 +2504,57 @@ int main( void)
 a는 영문이나 숫자입니다.
 1는 영문이나 숫자입니다.
 ==============================================================================
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+typedef struct {
+    char name[50];
+    int score;
+    int time;
+} student;
+
+int comparebyname( const void *a, const void *b) {
+    const student *st1 = (const student *)a;
+    const student *st2 = (const student *)b;
+
+    return strcmp(st1->name, st2->name);
+}
+
+int comparebyscore( const void *a, const void *b) {
+
+    const student *st1 = (const student *)a;
+    const student *st2 = (const student *)b;
+
+    return st1->score - st2->score;
+}
+
+int comparebytime( const void *a, const void *b) {
+
+    const student *st1 = (const student *)a;
+    const student *st2 = (const student *)b;
+
+    return st1->time - st2->time;
+}
+
+int main()
+{
+    int i,j;
+    int len;
+
+    student st[4] = {{"chochanghoon",20,60}, {"kimgildong",30,120},{"hongsenungwhan",40,180},{"jisung",50,30}};
+
+    len = sizeof(st) / sizeof(st[0]);
+    printf("len = %d\n", len);
+
+    //qsort(&st, len, sizeof(st[0]), comparebyname);
+    //qsort(&st, len, sizeof(st[0]), comparebyscore);
+    qsort(&st, len, sizeof(st[0]), comparebytime);
+
+    for(i=0; i<len; i++) {
+        printf("%s %d %d\n", st[i].name, st[i].score, st[i].time);
+    }
+    return 0;
+}
+	
